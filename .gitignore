@@ -1,0 +1,6 @@
+# Archivos generados al compilar el proyecto Maven.
+/target/
+
+# Configuracion local de NetBeans.
+/nbproject/private/
+/nbactions-local.xml
