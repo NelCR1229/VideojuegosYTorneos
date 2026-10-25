@@ -9,15 +9,26 @@ public class GestionTorneos extends javax.swing.JFrame {
 
     private DatosSistema datos;
     private javax.swing.JFrame ventanaAnterior;
+    private Usuario usuario;
 
-    public GestionTorneos(DatosSistema datos, javax.swing.JFrame ventanaAnterior) {
+    public GestionTorneos(DatosSistema datos, javax.swing.JFrame ventanaAnterior, Usuario usuario) {
         this.datos = datos;
         this.ventanaAnterior = ventanaAnterior;
+        this.usuario = usuario;
         initComponents();
         setLocationRelativeTo(null);
         cmbVideojuego.setModel(new DefaultComboBoxModel<>(datos.getVideojuegos().toArray(new Videojuego[0])));
         cmbEstado.setModel(new DefaultComboBoxModel<>(EstadoTorneo.values()));
         cargarTabla();
+        // Solo administrador y organizador pueden agregar torneos.
+        boolean puedeGestionar = usuario.getRol() == Rol.Administrador
+                || usuario.getRol() == Rol.Organizador;
+
+        btnAgregar.setEnabled(puedeGestionar);
+
+// Estas funciones todavia son prototipos.
+        btnEditar.setEnabled(false);
+        btnEliminar.setEnabled(false);
     }
 
     private void cargarTabla() {
@@ -232,6 +243,13 @@ public class GestionTorneos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        if (usuario.getRol() != Rol.Administrador
+                && usuario.getRol() != Rol.Organizador) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Su rol solo permite consultar torneos.");
+            return;
+        }
         String error = validar();
         if (error != null) {
             JOptionPane.showMessageDialog(this, error);
@@ -272,7 +290,17 @@ public class GestionTorneos extends javax.swing.JFrame {
         DatosSistema datos = new DatosSistema();
         datos.getVideojuegos().add(new Videojuego("V001", "EA Sports FC 25", "Deportes", "PlayStation 5"));
         datos.getVideojuegos().add(new Videojuego("V002", "Street Fighter 6", "Pelea", "PC"));
-        java.awt.EventQueue.invokeLater(() -> new GestionTorneos(datos, null).setVisible(true));
+        // Usuario exclusivo para ejecutar este formulario como prueba.
+        Usuario usuarioPrueba = new Usuario(
+                "UT01",
+                "Organizador de prueba",
+                "organizador",
+                "clavePrueba",
+                Rol.Organizador
+        );
+
+        java.awt.EventQueue.invokeLater(() -> new GestionTorneos(datos, null, usuarioPrueba).setVisible(true)
+        );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

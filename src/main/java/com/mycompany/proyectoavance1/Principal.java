@@ -176,7 +176,10 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVideojuegosActionPerformed
 
     private void btnTorneosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTorneosActionPerformed
-        // TODO add your handling code here:
+        GestionTorneos ventana = new GestionTorneos(datos, this, usuario);
+        ventana.setVisible(true);
+        this.setVisible(false);
+// TODO add your handling code here:
     }//GEN-LAST:event_btnTorneosActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
