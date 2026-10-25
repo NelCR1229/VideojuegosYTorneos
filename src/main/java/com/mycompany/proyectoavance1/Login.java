@@ -41,9 +41,12 @@ public class Login extends javax.swing.JFrame {
         lblTitulo.setText("Videojuegos y torneos");
 
         lblClave.setFont(new java.awt.Font("Stencil", 0, 24)); // NOI18N
+        lblClave.setForeground(new java.awt.Color(255, 255, 255));
         lblClave.setText("Clave : ");
 
+        lblUsuario.setBackground(new java.awt.Color(255, 255, 255));
         lblUsuario.setFont(new java.awt.Font("Stencil", 0, 24)); // NOI18N
+        lblUsuario.setForeground(new java.awt.Color(255, 255, 255));
         lblUsuario.setText("Usuario : ");
 
         txtUsuario.setBackground(new java.awt.Color(0, 153, 255));
@@ -54,12 +57,15 @@ public class Login extends javax.swing.JFrame {
 
         btnIngresar.setBackground(new java.awt.Color(0, 153, 255));
         btnIngresar.setFont(new java.awt.Font("Stencil", 0, 30)); // NOI18N
+        btnIngresar.setForeground(new java.awt.Color(255, 255, 255));
         btnIngresar.setText("Iniciar sesión");
         btnIngresar.addActionListener(this::btnIngresarActionPerformed);
 
         btnRegistro.setBackground(new java.awt.Color(0, 153, 255));
         btnRegistro.setFont(new java.awt.Font("Stencil", 0, 30)); // NOI18N
+        btnRegistro.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistro.setText("Registrarse");
+        btnRegistro.addActionListener(this::btnRegistroActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -164,6 +170,12 @@ public class Login extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_btnIngresarActionPerformed
+
+    private void btnRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroActionPerformed
+        Registro registro = new Registro(datos, this);
+        registro.setVisible(true);
+        this.setVisible(false);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistroActionPerformed
 
     /**
      * @param args the command line arguments
