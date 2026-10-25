@@ -3,22 +3,22 @@
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="Gestión de torneos"/>
+    <Property name="title" type="java.lang.String" value="Gesti&#xf3;n de torneos"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
-    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Object" value="0"/>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Object" value="1"/>
-    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Object" value="0"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Object" value="2"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
   </AuxValues>
 
   <Layout>
@@ -118,17 +118,15 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Dialog" size="18" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Gestión de torneos"/>
+        <Property name="text" type="java.lang.String" value="Gesti&#xf3;n de torneos"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lblCodigo">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Código:"/>
+        <Property name="text" type="java.lang.String" value="C&#xf3;digo:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtCodigo">
-      <Properties>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lblNombre">
       <Properties>
@@ -149,12 +147,10 @@
     </Component>
     <Component class="javax.swing.JLabel" name="lblCupo">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Cupo máximo:"/>
+        <Property name="text" type="java.lang.String" value="Cupo m&#xe1;ximo:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtCupo">
-      <Properties>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lblEstado">
       <Properties>
@@ -217,7 +213,7 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="5" rowCount="0">
-                <Column editable="false" title="Código" type="java.lang.Object"/>
+                <Column editable="false" title="C&#xf3;digo" type="java.lang.Object"/>
                 <Column editable="false" title="Nombre" type="java.lang.Object"/>
                 <Column editable="false" title="Videojuego" type="java.lang.Object"/>
                 <Column editable="false" title="Cupo" type="java.lang.Object"/>

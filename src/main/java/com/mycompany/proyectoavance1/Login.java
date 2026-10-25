@@ -146,7 +146,7 @@ public class Login extends javax.swing.JFrame {
         String nombreUsuario = txtUsuario.getText();
         String clave = new String(txtClave.getPassword());
 
-// Comprueba los campos antes de intentar iniciar sesion.
+    // Comprueba los campos antes de buscar al usuario.
         if (nombreUsuario.equals("") || clave.equals("")) {
             JOptionPane.showMessageDialog(this,
                     "Debe ingresar el usuario y la clave.",
@@ -159,16 +159,18 @@ public class Login extends javax.swing.JFrame {
         Usuario usuario = datos.iniciarSesion(nombreUsuario, clave);
 
         if (usuario != null) {
-            JOptionPane.showMessageDialog(this,
-                    "Bienvenido: " + usuario.getNombre()
-                    + "\nRol: " + usuario.getRol());
+            // Comparte los datos, el usuario autenticado y este Login.
+            Principal principal = new Principal(datos, usuario, this);
+            principal.setVisible(true);
+
+            txtClave.setText("");
+            this.setVisible(false);
         } else {
             JOptionPane.showMessageDialog(this,
                     "Usuario o clave incorrectos.",
                     "Acceso rechazado",
                     JOptionPane.ERROR_MESSAGE);
         }
-
     }//GEN-LAST:event_btnIngresarActionPerformed
 
     private void btnRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroActionPerformed

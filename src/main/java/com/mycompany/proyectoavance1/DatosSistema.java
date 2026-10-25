@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class DatosSistema {
 
     private ArrayList<Usuario> usuarios;
+    private ArrayList<Videojuego> videojuegos;
+    private ArrayList<Torneo> torneos;
 
     public DatosSistema() {
         usuarios = new ArrayList<>();
@@ -15,6 +17,14 @@ public class DatosSistema {
 
     public ArrayList<Usuario> getUsuarios() {
         return usuarios;
+    }
+
+    public ArrayList<Videojuego> getVideojuegos() {
+        return videojuegos;
+    }
+
+    public ArrayList<Torneo> getTorneos() {
+        return torneos;
     }
 
     // Busca por nombre de usuario, devuelve el objeto encontrado o null si no existe.

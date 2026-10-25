@@ -1,5 +1,5 @@
 // Nicolás Hernández
-package com.mycompany.videojuegosytorneos;
+package com.mycompany.proyectoavance1;
 
 import java.util.Objects;
 
