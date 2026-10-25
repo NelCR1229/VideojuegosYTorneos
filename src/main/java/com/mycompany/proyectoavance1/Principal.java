@@ -84,18 +84,18 @@ public class Principal extends javax.swing.JFrame {
         lblUsuario.setText("Usuario:");
 
         btnTorneos.setBackground(new java.awt.Color(51, 204, 0));
-        btnTorneos.setFont(new java.awt.Font("Stencil", 0, 24)); // NOI18N
+        btnTorneos.setFont(new java.awt.Font("Stencil", 0, 22)); // NOI18N
         btnTorneos.setForeground(new java.awt.Color(0, 0, 204));
         btnTorneos.setText("torneos");
         btnTorneos.addActionListener(this::btnTorneosActionPerformed);
 
         btnCompetencia.setBackground(new java.awt.Color(51, 204, 0));
-        btnCompetencia.setFont(new java.awt.Font("Stencil", 0, 24)); // NOI18N
+        btnCompetencia.setFont(new java.awt.Font("Stencil", 0, 22)); // NOI18N
         btnCompetencia.setForeground(new java.awt.Color(0, 0, 204));
         btnCompetencia.setText("Competencia");
 
         btnVideojuegos.setBackground(new java.awt.Color(51, 204, 0));
-        btnVideojuegos.setFont(new java.awt.Font("Stencil", 0, 24)); // NOI18N
+        btnVideojuegos.setFont(new java.awt.Font("Stencil", 0, 22)); // NOI18N
         btnVideojuegos.setForeground(new java.awt.Color(0, 0, 204));
         btnVideojuegos.setText("Videojuego");
         btnVideojuegos.addActionListener(this::btnVideojuegosActionPerformed);
