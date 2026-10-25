@@ -9,10 +9,16 @@ public class DatosSistema {
 
     private ArrayList<Usuario> usuarios;
     private ArrayList<Videojuego> videojuegos;
+    private ArrayList<Inscripcion> inscripciones;
     private ArrayList<Torneo> torneos;
+    private ArrayList<Partida> partidas;
 
     public DatosSistema() {
         usuarios = new ArrayList<>();
+        torneos = new ArrayList<>();
+        inscripciones = new ArrayList<>();
+        partidas = new ArrayList<>();
+        videojuegos = new ArrayList<>();
     }
 
     public ArrayList<Usuario> getUsuarios() {
@@ -25,6 +31,14 @@ public class DatosSistema {
 
     public ArrayList<Torneo> getTorneos() {
         return torneos;
+    }
+    
+    public ArrayList<Inscripcion> getInscripciones() { 
+        return inscripciones; 
+    }
+    
+    public ArrayList<Partida> getPartidas() { 
+        return partidas; 
     }
 
     // Busca por nombre de usuario, devuelve el objeto encontrado o null si no existe.
