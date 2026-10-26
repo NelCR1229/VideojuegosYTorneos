@@ -1,8 +1,7 @@
 package com.mycompany.proyectoavance1;
 
-
 public class Partida {
-    
+
     private String codigo;
     private Torneo torneo;
     private Usuario jugador1;
@@ -59,8 +58,15 @@ public class Partida {
 
     @Override
     public String toString() {
-        return "Partida [" + codigo + "] " + (jugador1 != null ? jugador1.getNombre() : "J1") + 
-               " vs " + (jugador2 != null ? jugador2.getNombre() : "J2");
+        String nombreJugador1 = "J1";
+        String nombreJugador2 = "J2";
+        if (jugador1 != null) {
+            nombreJugador1 = jugador1.getNombre();
+        }
+        if (jugador2 != null) {
+            nombreJugador2 = jugador2.getNombre();
+        }
+        return "Partida [" + codigo + "] " + nombreJugador1 + " vs " + nombreJugador2;
     }
-    
+
 }

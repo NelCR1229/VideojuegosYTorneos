@@ -1,9 +1,7 @@
 package com.mycompany.proyectoavance1;
-
 /*
  * Guarda su identificación, sus datos de acceso y su rol.
  */
-
 public class Usuario {
 
     private String codigo;
@@ -26,10 +24,7 @@ public class Usuario {
     /*Devuelve los datos generales del usuario.*/
     @Override
     public String toString() {
-        return "Codigo: " + codigo
-                + "\nNombre: " + nombre
-                + "\nUsuario: " + usuario
-                + "\nRol: " + rol;
+         return codigo + " - " + nombre;
     }
 
     public String getCodigo() {

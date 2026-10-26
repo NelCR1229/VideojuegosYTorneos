@@ -8,9 +8,6 @@ public class Registro extends javax.swing.JFrame {
     private DatosSistema datos;
     private Login login;
 
-    /**
-     * Creates new form Registro
-     */
     public Registro(DatosSistema datos, Login login) {
         initComponents();
         this.datos = datos;
@@ -53,8 +50,12 @@ public class Registro extends javax.swing.JFrame {
         btnVolver = new javax.swing.JButton();
         btnRegistrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(839, 589));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                CerrarVentana(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(51, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 204), 6));
@@ -192,38 +193,29 @@ public class Registro extends javax.swing.JFrame {
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
-
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCodigoActionPerformed
-
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
-
     private void txtClaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtClaveActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtClaveActionPerformed
-
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        volverLogin();        
+        volverLogin();
         // Recupera Login y cierra la ventana de registro.
-      
-    }//GEN-LAST:event_btnVolverActionPerformed
 
+    }//GEN-LAST:event_btnVolverActionPerformed
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        String codigo = txtCodigo.getText();
-        String nombre = txtNombre.getText();
-        String nombreUsuario = txtUsuario.getText();
+        String codigo = txtCodigo.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String nombreUsuario = txtUsuario.getText().trim();
         String clave = new String(txtClave.getPassword());
 
         // No intenta registrar si falta algun dato.
-        if (codigo.equals("") || nombre.equals("")
-                || nombreUsuario.equals("") || clave.equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "Debe completar todos los campos.",
-                    "Datos incompletos",
-                    JOptionPane.WARNING_MESSAGE);
+        if (codigo.equals("") || nombre.equals("")|| nombreUsuario.equals("") || clave.trim().equals("")) {
+            JOptionPane.showMessageDialog(this,"Debe completar todos los campos.","Datos incompletos",JOptionPane.WARNING_MESSAGE);
             return;
         }
         boolean registrado = datos.registrarUsuario(
@@ -231,24 +223,17 @@ public class Registro extends javax.swing.JFrame {
         );
 
         if (registrado) {
-            JOptionPane.showMessageDialog(this,
-                    "Usuario registrado correctamente.");
+            JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.");
             limpiar();
         } else {
-            JOptionPane.showMessageDialog(this,
-                    "El codigo o el nombre de usuario ya existe.",
-                    "Registro rechazado",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El codigo o el nombre de usuario ya existe.", "Registro rechazado", JOptionPane.ERROR_MESSAGE);
         }
-
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    private void CerrarVentana(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_CerrarVentana
+       volverLogin();
+    }//GEN-LAST:event_CerrarVentana
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -264,8 +249,6 @@ public class Registro extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new Registro(new DatosSistema(), null).setVisible(true));
     }
 

@@ -1,8 +1,5 @@
 // Nicolás Hernández
 package com.mycompany.proyectoavance1;
-
-import java.util.Objects;
-
 public class Torneo {
 
     private String codigo;
@@ -57,20 +54,6 @@ public class Torneo {
 
     public void setEstado(EstadoTorneo estado) {
         this.estado = estado;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Torneo)) {
-            return false;
-        }
-        Torneo otro = (Torneo) obj;
-        return codigo.equalsIgnoreCase(otro.codigo);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(codigo.toUpperCase());
     }
 
     @Override

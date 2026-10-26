@@ -13,7 +13,6 @@ public class Principal extends javax.swing.JFrame {
         login.setVisible(true);
         dispose();
     }
-
     public Principal(DatosSistema datos, Usuario usuario, Login login) {
         initComponents();
         this.datos = datos;
@@ -25,14 +24,9 @@ public class Principal extends javax.swing.JFrame {
         // Muestra los datos de la persona que inicio sesion.
         lblUsuario.setText("Usuario: " + usuario.getNombre());
         lblRol.setText("Rol: " + usuario.getRol());
-
-        lblUsuario.setText("Usuario: " + usuario.getNombre());
-        lblRol.setText("Rol: " + usuario.getRol());
-
         aplicarRol();
 
     }
-
     // Ajusta las opciones del menu segun el rol autenticado.
     public void aplicarRol() {
 
@@ -93,6 +87,7 @@ public class Principal extends javax.swing.JFrame {
         btnCompetencia.setFont(new java.awt.Font("Stencil", 0, 22)); // NOI18N
         btnCompetencia.setForeground(new java.awt.Color(0, 0, 204));
         btnCompetencia.setText("Competencia");
+        btnCompetencia.addActionListener(this::btnCompetenciaActionPerformed);
 
         btnVideojuegos.setBackground(new java.awt.Color(51, 204, 0));
         btnVideojuegos.setFont(new java.awt.Font("Stencil", 0, 22)); // NOI18N
@@ -110,33 +105,27 @@ public class Principal extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblTitulo)
-                .addGap(298, 298, 298))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(btnVideojuegos, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnVideojuegos, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(btnCerrarSesion)
                         .addGap(62, 62, 62))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(btnTorneos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)))
-                .addComponent(btnCompetencia, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnTorneos, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addComponent(btnCompetencia, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(407, 407, 407)
-                        .addComponent(lblRol))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(336, 336, 336)
+                    .addComponent(lblTitulo)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(lblRol)
                         .addComponent(lblUsuario)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(298, 298, 298))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,20 +161,28 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVideojuegosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVideojuegosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnVideojuegosActionPerformed
+        GestionVideojuegos ventana = new GestionVideojuegos(
+                this, datos, usuario
+        );
 
+        ventana.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnVideojuegosActionPerformed
     private void btnTorneosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTorneosActionPerformed
         GestionTorneos ventana = new GestionTorneos(datos, this, usuario);
         ventana.setVisible(true);
         this.setVisible(false);
 // TODO add your handling code here:
     }//GEN-LAST:event_btnTorneosActionPerformed
-
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         cerrarSesion();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
+    private void btnCompetenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompetenciaActionPerformed
+        GestionCompetencia ventana = new GestionCompetencia(datos, this, usuario);
+        ventana.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCompetenciaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

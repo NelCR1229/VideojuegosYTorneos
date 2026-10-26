@@ -1,4 +1,3 @@
-// Nicolás Hernández
 package com.mycompany.proyectoavance1;
 
 import javax.swing.DefaultComboBoxModel;
@@ -17,8 +16,14 @@ public class GestionTorneos extends javax.swing.JFrame {
         this.usuario = usuario;
         initComponents();
         setLocationRelativeTo(null);
-        cmbVideojuego.setModel(new DefaultComboBoxModel<>(datos.getVideojuegos().toArray(new Videojuego[0])));
-        cmbEstado.setModel(new DefaultComboBoxModel<>(EstadoTorneo.values()));
+        // Prepara un arreglo con los videojuegos de la coleccion.
+        Videojuego[] listaVideojuegos = new Videojuego[datos.getVideojuegos().size()];
+        for (int i = 0; i < datos.getVideojuegos().size(); i++) {
+            listaVideojuegos[i] = datos.getVideojuegos().get(i);
+        }
+        cmbVideojuego.setModel(new DefaultComboBoxModel<>(listaVideojuegos));
+        EstadoTorneo[] estados = {EstadoTorneo.Abierto, EstadoTorneo.EnCurso, EstadoTorneo.Finalizado};
+        cmbEstado.setModel(new DefaultComboBoxModel<>(estados));
         cargarTabla();
         // Solo administrador y organizador pueden agregar torneos.
         boolean puedeGestionar = usuario.getRol() == Rol.Administrador
@@ -31,24 +36,40 @@ public class GestionTorneos extends javax.swing.JFrame {
         btnEliminar.setEnabled(false);
     }
 
+// Reconstruye la tabla a partir de los torneos registrados.
     private void cargarTabla() {
-        DefaultTableModel modelo = (DefaultTableModel) tblTorneos.getModel();
-        modelo.setRowCount(0);
-        for (Torneo t : datos.getTorneos()) {
-            modelo.addRow(new Object[]{t.getCodigo(), t.getNombre(), t.getVideojuego().getNombre(), t.getCupoMaximo(), t.getEstado()});
-        }
-    }
 
+        DefaultTableModel modelo = new DefaultTableModel();
+
+        modelo.addColumn("Codigo");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Videojuego");
+        modelo.addColumn("Cupo");
+        modelo.addColumn("Estado");
+
+        for (Torneo torneo : datos.getTorneos()) {
+            modelo.addRow(new Object[]{
+                torneo.getCodigo(),
+                torneo.getNombre(),
+                torneo.getVideojuego().getNombre(),
+                torneo.getCupoMaximo(),
+                torneo.getEstado()
+            });
+        }
+
+        tblTorneos.setModel(modelo);
+        // La tabla se utiliza solo para mostrar informacion en este avance.
+        tblTorneos.setEnabled(false);
+    }
     private void limpiar() {
         txtCodigo.setText("");
         txtNombre.setText("");
         txtCupo.setText("");
-        cmbEstado.setSelectedIndex(0);
+        cmbEstado.setSelectedItem(EstadoTorneo.Abierto);
     }
-
     private String validar() {
         String codigo = txtCodigo.getText().trim();
-        if (codigo.isEmpty()) {
+        if (codigo.equals("")) {
             return "Debe ingresar el código.";
         }
         for (Torneo t : datos.getTorneos()) {
@@ -56,7 +77,7 @@ public class GestionTorneos extends javax.swing.JFrame {
                 return "Ya existe un torneo con ese código.";
             }
         }
-        if (txtNombre.getText().trim().isEmpty()) {
+        if (txtNombre.getText().trim().equals("")) {
             return "Debe ingresar el nombre.";
         }
         if (cmbVideojuego.getSelectedItem() == null) {
@@ -71,6 +92,13 @@ public class GestionTorneos extends javax.swing.JFrame {
         }
         return null;
     }
+    public void volverPrincipal() {
+    if (ventanaAnterior != null) {
+        ventanaAnterior.setVisible(true);
+    }
+
+    dispose();
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -95,10 +123,15 @@ public class GestionTorneos extends javax.swing.JFrame {
         scrTorneos = new javax.swing.JScrollPane();
         tblTorneos = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Gestión de torneos");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                CerrarVentana(evt);
+            }
+        });
 
-        lblTitulo.setFont(new java.awt.Font("Dialog", 1, 18));
+        lblTitulo.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lblTitulo.setText("Gestión de torneos");
 
         lblCodigo.setText("Código:");
@@ -256,7 +289,7 @@ public class GestionTorneos extends javax.swing.JFrame {
             return;
         }
         Torneo torneo = new Torneo(
-                txtCodigo.getText().trim().toUpperCase(),
+                txtCodigo.getText().trim(),
                 txtNombre.getText().trim(),
                 (Videojuego) cmbVideojuego.getSelectedItem(),
                 Integer.parseInt(txtCupo.getText().trim()),
@@ -266,25 +299,22 @@ public class GestionTorneos extends javax.swing.JFrame {
         limpiar();
         JOptionPane.showMessageDialog(this, "Torneo agregado.");
     }//GEN-LAST:event_btnAgregarActionPerformed
-
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         JOptionPane.showMessageDialog(this, "Disponible en el siguiente avance.");
     }//GEN-LAST:event_btnEditarActionPerformed
-
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         JOptionPane.showMessageDialog(this, "Disponible en el siguiente avance.");
     }//GEN-LAST:event_btnEliminarActionPerformed
-
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         limpiar();
     }//GEN-LAST:event_btnLimpiarActionPerformed
-
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        dispose();
-        if (ventanaAnterior != null) {
-            ventanaAnterior.setVisible(true);
-        }
+        volverPrincipal();
     }//GEN-LAST:event_btnRegresarActionPerformed
+
+    private void CerrarVentana(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_CerrarVentana
+    volverPrincipal();
+    }//GEN-LAST:event_CerrarVentana
 
     public static void main(String args[]) {
         DatosSistema datos = new DatosSistema();

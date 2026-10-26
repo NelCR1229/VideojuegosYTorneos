@@ -1,8 +1,7 @@
 package com.mycompany.proyectoavance1;
 
-
 public class Inscripcion {
-    
+
     private String codigo;
     private Usuario usuario;
     private Torneo torneo;
@@ -39,7 +38,10 @@ public class Inscripcion {
 
     @Override
     public String toString() {
-        return "Inscripción [" + codigo + "] - Usuario: " + (usuario != null ? usuario.getNombre() : "N/A");
+        String nombreUsuario = "N/A";
+        if (usuario != null) {
+            nombreUsuario = usuario.getNombre();
+        }
+        return "Inscripcion [" + codigo + "] - Usuario: "+ nombreUsuario;
     }
-    
 }
