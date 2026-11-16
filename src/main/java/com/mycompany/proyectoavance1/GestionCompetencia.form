@@ -131,6 +131,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="cbTorneo">
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbTorneoItemStateChanged"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Torneo&gt;"/>
       </AuxValues>

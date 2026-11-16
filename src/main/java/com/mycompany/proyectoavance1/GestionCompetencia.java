@@ -20,10 +20,11 @@ public class GestionCompetencia extends javax.swing.JFrame {
 
         setLocationRelativeTo(null);
         cargarListasDesplegables();
+        actualizarJugadoresPorTorneo();
         actualizarTabla();
         aplicarPermisos();
     }
-
+    
     private void cargarListasDesplegables() {
         Torneo[] listaTorneos = new Torneo[datos.getTorneos().size()];
         for (int i = 0; i < datos.getTorneos().size(); i++) {
@@ -37,6 +38,70 @@ public class GestionCompetencia extends javax.swing.JFrame {
         cbJugador1.setModel(new DefaultComboBoxModel<>(listaUsuarios));
         cbJugador2.setModel(new DefaultComboBoxModel<>(listaUsuarios));
     }
+    
+    private void actualizarJugadoresPorTorneo() {
+    Torneo torneoSeleccionado = (Torneo) cbTorneo.getSelectedItem();
+    if (torneoSeleccionado == null) return;
+    
+   
+    java.util.ArrayList<Usuario> usuariosInscritos = new java.util.ArrayList<>();
+    
+    if (datos.getInscripciones() != null) {
+        for (Inscripcion ins : datos.getInscripciones()) {
+            if (ins.getTorneo().getCodigo() == torneoSeleccionado.getCodigo()) {
+                usuariosInscritos.add(ins.getUsuario());
+            }
+        }
+    }
+    
+    Usuario[] listaInscritos = usuariosInscritos.toArray(new Usuario[0]);
+    cbJugador1.setModel(new DefaultComboBoxModel<>(listaInscritos));
+    cbJugador2.setModel(new DefaultComboBoxModel<>(listaInscritos));
+    }
+    
+    public String registrarInscripcion(Torneo torneoSeleccionado, Usuario usuarioSeleccionado) {
+    if (torneoSeleccionado == null || usuarioSeleccionado == null) {
+        return "Debe seleccionar un torneo y un usuario válidos.";
+    }
+    
+    
+    if (!torneoSeleccionado.getEstado().toString().equalsIgnoreCase("Abierto")) {
+        return "El torneo no está abierto para inscripciones.";
+    }
+    
+    
+    int inscritosActuales = 0;
+    if (datos.getInscripciones() != null) {
+        for (Inscripcion ins : datos.getInscripciones()) {
+            if (ins.getTorneo().getCodigo().equals(torneoSeleccionado.getCodigo())) {
+                inscritosActuales++;
+                
+                if (ins.getUsuario().getCodigo().equals(usuarioSeleccionado.getCodigo())) {
+                    return "El usuario ya se encuentra inscrito en este torneo.";
+                }
+            }
+        }
+    }
+    
+    
+    if (inscritosActuales >= torneoSeleccionado.getCupoMaximo()) {
+        return "Error: El torneo ha alcanzado su límite de cupo lleno. No se modificó el cupo.";
+    }
+    
+    
+    String codigoInscripcion = "INS-" + System.currentTimeMillis();
+    
+    
+    Inscripcion nuevaInscripcion = new Inscripcion(codigoInscripcion, usuarioSeleccionado, torneoSeleccionado);
+    if (datos.getInscripciones() == null) {
+        datos.getInscripciones().add(nuevaInscripcion);
+    }
+    datos.getInscripciones().add(nuevaInscripcion);
+    
+    return "Inscripción realizada con éxito.";
+}
+    
+    
     private void actualizarTabla() {
         modeloTabla = new DefaultTableModel();
         modeloTabla.addColumn("Codigo Partida");
@@ -137,6 +202,8 @@ public class GestionCompetencia extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
         jLabel3.setText("Seleccionar Torneo:");
+
+        cbTorneo.addItemListener(this::cbTorneoItemStateChanged);
 
         jLabel4.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
         jLabel4.setText("Jugador 1:");
@@ -271,6 +338,12 @@ public class GestionCompetencia extends javax.swing.JFrame {
     private void asd(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_asd
         volverPrincipal();
     }//GEN-LAST:event_asd
+
+    private void cbTorneoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbTorneoItemStateChanged
+        if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+        actualizarJugadoresPorTorneo();
+        }
+    }//GEN-LAST:event_cbTorneoItemStateChanged
 
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
