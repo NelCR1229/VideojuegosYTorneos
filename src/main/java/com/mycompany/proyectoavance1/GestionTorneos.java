@@ -1,5 +1,6 @@
 package com.mycompany.proyectoavance1;
 
+import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -30,16 +31,31 @@ public class GestionTorneos extends javax.swing.JFrame {
                 || usuario.getRol() == Rol.Organizador;
 
         btnAgregar.setEnabled(puedeGestionar);
+        btnEditar.setEnabled(puedeGestionar);
+        btnEliminar.setEnabled(puedeGestionar);
 
-// Estas funciones todavia son prototipos.
-        btnEditar.setEnabled(false);
-        btnEliminar.setEnabled(false);
+        // Al seleccionar una fila de la tabla, sus datos pasan al formulario para poder editarlos.
+        tblTorneos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblTorneos.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
+            public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    cargarSeleccionado();
+                }
+            }
+        });
     }
 
 // Reconstruye la tabla a partir de los torneos registrados.
     private void cargarTabla() {
 
-        DefaultTableModel modelo = new DefaultTableModel();
+        // Las celdas no se pueden editar a mano, pero las filas si se pueden seleccionar.
+        DefaultTableModel modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {
+                return false;
+            }
+        };
 
         modelo.addColumn("Codigo");
         modelo.addColumn("Nombre");
@@ -58,14 +74,110 @@ public class GestionTorneos extends javax.swing.JFrame {
         }
 
         tblTorneos.setModel(modelo);
-        // La tabla se utiliza solo para mostrar informacion en este avance.
-        tblTorneos.setEnabled(false);
     }
+
     private void limpiar() {
+        tblTorneos.clearSelection();
+        txtCodigo.setEnabled(true); // el codigo solo se bloquea mientras se edita un torneo
         txtCodigo.setText("");
         txtNombre.setText("");
         txtCupo.setText("");
         cmbEstado.setSelectedItem(EstadoTorneo.Abierto);
+    }
+
+    // Busca un torneo por su codigo. Devuelve null si no existe.
+    private Torneo buscarTorneo(String codigo) {
+        for (Torneo t : datos.getTorneos()) {
+            if (t.getCodigo().equals(codigo)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    // Devuelve el torneo de la fila seleccionada, o null si no hay ninguna.
+    private Torneo obtenerSeleccionado() {
+        int fila = tblTorneos.getSelectedRow();
+        if (fila < 0) {
+            return null;
+        }
+        return buscarTorneo((String) tblTorneos.getValueAt(fila, 0));
+    }
+
+    // Pasa los datos del torneo seleccionado al formulario.
+    private void cargarSeleccionado() {
+        Torneo torneo = obtenerSeleccionado();
+        if (torneo == null) {
+            return;
+        }
+        txtCodigo.setText(torneo.getCodigo());
+        txtCodigo.setEnabled(false); // al editar se conserva el codigo
+        txtNombre.setText(torneo.getNombre());
+        cmbVideojuego.setSelectedItem(torneo.getVideojuego());
+        txtCupo.setText("" + torneo.getCupoMaximo());
+        cmbEstado.setSelectedItem(torneo.getEstado());
+    }
+
+    private boolean puedeGestionar() {
+        return usuario.getRol() == Rol.Administrador
+                || usuario.getRol() == Rol.Organizador;
+    }
+
+    // Cuantas personas estan inscritas en el torneo.
+    private int contarInscritos(Torneo torneo) {
+        int total = 0;
+        for (Inscripcion ins : datos.getInscripciones()) {
+            if (ins.getTorneo().getCodigo().equals(torneo.getCodigo())) {
+                total++;
+            }
+        }
+        return total;
+    }
+
+    // Cuantas partidas tiene registradas el torneo.
+    private int contarPartidas(Torneo torneo) {
+        int total = 0;
+        for (Partida partida : datos.getPartidas()) {
+            if (partida.getTorneo() != null
+                    && partida.getTorneo().getCodigo().equals(torneo.getCodigo())) {
+                total++;
+            }
+        }
+        return total;
+    }
+
+    // Validaciones para editar: nombre, videojuego existente y cupo positivo que no baje de los inscritos.
+    private String validarEdicion(Torneo torneo) {
+        if (txtNombre.getText().trim().equals("")) {
+            return "Debe ingresar el nombre.";
+        }
+        Videojuego videojuego = (Videojuego) cmbVideojuego.getSelectedItem();
+        if (videojuego == null) {
+            return "Debe seleccionar un videojuego.";
+        }
+        boolean existe = false;
+        for (Videojuego v : datos.getVideojuegos()) {
+            if (v.getCodigo().equals(videojuego.getCodigo())) {
+                existe = true;
+            }
+        }
+        if (!existe) {
+            return "El videojuego seleccionado ya no existe.";
+        }
+        int cupo;
+        try {
+            cupo = Integer.parseInt(txtCupo.getText().trim());
+        } catch (NumberFormatException e) {
+            return "El cupo debe ser un número entero.";
+        }
+        if (cupo <= 0) {
+            return "El cupo debe ser mayor que cero.";
+        }
+        int inscritos = contarInscritos(torneo);
+        if (cupo < inscritos) {
+            return "El cupo no puede ser menor que la cantidad de inscritos (" + inscritos + ").";
+        }
+        return null;
     }
     private String validar() {
         String codigo = txtCodigo.getText().trim();
@@ -294,16 +406,84 @@ public class GestionTorneos extends javax.swing.JFrame {
                 (Videojuego) cmbVideojuego.getSelectedItem(),
                 Integer.parseInt(txtCupo.getText().trim()),
                 (EstadoTorneo) cmbEstado.getSelectedItem());
+        try {
+            TorneoBD.insertar(torneo);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo guardar en la base de datos: " + ex.getMessage());
+            return;
+        }
         datos.getTorneos().add(torneo);
         cargarTabla();
         limpiar();
         JOptionPane.showMessageDialog(this, "Torneo agregado.");
     }//GEN-LAST:event_btnAgregarActionPerformed
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        JOptionPane.showMessageDialog(this, "Disponible en el siguiente avance.");
+        if (!puedeGestionar()) {
+            JOptionPane.showMessageDialog(this, "Su rol solo permite consultar torneos.");
+            return;
+        }
+        Torneo torneo = obtenerSeleccionado();
+        if (torneo == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione un torneo de la tabla.");
+            return;
+        }
+        String error = validarEdicion(torneo);
+        if (error != null) {
+            JOptionPane.showMessageDialog(this, error);
+            return;
+        }
+        String nombre = txtNombre.getText().trim();
+        Videojuego videojuego = (Videojuego) cmbVideojuego.getSelectedItem();
+        int cupo = Integer.parseInt(txtCupo.getText().trim());
+        EstadoTorneo estado = (EstadoTorneo) cmbEstado.getSelectedItem();
+        try {
+            TorneoBD.actualizar(torneo.getCodigo(), nombre, videojuego, cupo, estado);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo guardar en la base de datos: " + ex.getMessage());
+            return;
+        }
+        // Se cambian los datos del MISMO objeto: el codigo y los demas modulos (Competencia) lo siguen viendo.
+        torneo.setNombre(nombre);
+        torneo.setVideojuego(videojuego);
+        torneo.setCupoMaximo(cupo);
+        torneo.setEstado(estado);
+        cargarTabla();
+        limpiar();
+        JOptionPane.showMessageDialog(this, "Torneo actualizado.");
     }//GEN-LAST:event_btnEditarActionPerformed
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        JOptionPane.showMessageDialog(this, "Disponible en el siguiente avance.");
+        if (!puedeGestionar()) {
+            JOptionPane.showMessageDialog(this, "Su rol solo permite consultar torneos.");
+            return;
+        }
+        Torneo torneo = obtenerSeleccionado();
+        if (torneo == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione un torneo de la tabla.");
+            return;
+        }
+        // Un torneo con inscripciones o partidas no se puede borrar.
+        int inscritos = contarInscritos(torneo);
+        int partidas = contarPartidas(torneo);
+        if (inscritos > 0 || partidas > 0) {
+            JOptionPane.showMessageDialog(this, "No se puede eliminar el torneo porque tiene "
+                    + inscritos + " inscripción(es) y " + partidas + " partida(s).");
+            return;
+        }
+        int respuesta = JOptionPane.showConfirmDialog(this,
+                "¿Desea eliminar el torneo " + torneo.getCodigo() + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (respuesta != JOptionPane.YES_OPTION) {
+            return;
+        }
+        try {
+            TorneoBD.eliminar(torneo.getCodigo());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo eliminar de la base de datos: " + ex.getMessage());
+            return;
+        }
+        datos.getTorneos().remove(torneo);
+        cargarTabla();
+        limpiar();
+        JOptionPane.showMessageDialog(this, "Torneo eliminado.");
     }//GEN-LAST:event_btnEliminarActionPerformed
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         limpiar();
