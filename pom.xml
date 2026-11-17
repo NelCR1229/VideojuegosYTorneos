@@ -10,4 +10,12 @@
         <maven.compiler.release>21</maven.compiler.release>
         <exec.mainClass>com.mycompany.proyectoavance1.ProyectoAvance1</exec.mainClass>
     </properties>
+    <dependencies>
+        <!-- Conector de MySQL (el equivalente Maven del .jar que se agrega en clase). -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.4.0</version>
+        </dependency>
+    </dependencies>
 </project>
