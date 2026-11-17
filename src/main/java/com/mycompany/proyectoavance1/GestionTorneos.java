@@ -48,6 +48,12 @@ public class GestionTorneos extends javax.swing.JFrame {
 // Reconstruye la tabla a partir de los torneos registrados.
     private void cargarTabla() {
 
+        // Con MySQL activado la tabla se llena directo de la base de datos.
+        if (ConexionSQL.USAR_BD) {
+            tblTorneos.setModel(Torneo.consultar(this));
+            return;
+        }
+
         // Las celdas no se pueden editar a mano, pero las filas si se pueden seleccionar.
         DefaultTableModel modelo = new DefaultTableModel() {
             @Override
@@ -406,7 +412,7 @@ public class GestionTorneos extends javax.swing.JFrame {
                 Integer.parseInt(txtCupo.getText().trim()),
                 (EstadoTorneo) cmbEstado.getSelectedItem());
         String mensajeBD = torneo.agregar();
-        if (mensajeBD != null) {
+        if (mensajeBD.startsWith("No se")) {
             JOptionPane.showMessageDialog(this, mensajeBD);
             return;
         }
@@ -444,7 +450,7 @@ public class GestionTorneos extends javax.swing.JFrame {
         torneo.setCupoMaximo(cupo);
         torneo.setEstado(estado);
         String mensajeBD = torneo.editar();
-        if (mensajeBD != null) {
+        if (mensajeBD.startsWith("No se")) {
             // Fallo la base: se devuelven los datos anteriores para no dejar memoria y BD distintas.
             torneo.setNombre(nombreAnt);
             torneo.setVideojuego(videojuegoAnt);
@@ -481,7 +487,7 @@ public class GestionTorneos extends javax.swing.JFrame {
             return;
         }
         String mensajeBD = torneo.eliminar();
-        if (mensajeBD != null) {
+        if (mensajeBD.startsWith("No se")) {
             JOptionPane.showMessageDialog(this, mensajeBD);
             return;
         }

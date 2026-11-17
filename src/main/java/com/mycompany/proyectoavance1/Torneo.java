@@ -4,6 +4,9 @@ package com.mycompany.proyectoavance1;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class Torneo {
 
@@ -13,6 +16,7 @@ public class Torneo {
     private int cupoMaximo;
     private EstadoTorneo estado;
 
+    // Constructor Agregar / Editar (el codigo lo escribe el usuario, no es autoincremental)
     public Torneo(String codigo, String nombre, Videojuego videojuego, int cupoMaximo, EstadoTorneo estado) {
         this.codigo = codigo;
         this.nombre = nombre;
@@ -21,15 +25,67 @@ public class Torneo {
         this.estado = estado;
     }
 
-    // METODOS CRUD (MySQL con PreparedStatement):
-    // agregar, editar y eliminar devuelven null si salio bien (o si USAR_BD es false)
-    // y un mensaje de error si algo fallo.
+    // Constructor Eliminar
+    public Torneo(String codigo) {
+        this.codigo = codigo;
+    }
 
-    // Consultar: carga los torneos guardados a la lista en memoria.
-    // Llamarlo al iniciar, DESPUES de cargar los videojuegos, porque cada torneo apunta a uno.
-    public static String consultar(DatosSistema datos) {
+    // METODOS CRUD (MySQL con PreparedStatement):
+    // Si USAR_BD es false no se usa MySQL y solo se devuelve el mensaje de exito.
+
+    // Consultar: devuelve el modelo de la tabla con los torneos guardados en MySQL.
+    public static DefaultTableModel consultar(JFrame frame) {
+        ConexionSQL conexionSQL = new ConexionSQL();
+
+        DefaultTableModel modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {
+                return false;
+            }
+        };
+
+        modelo.addColumn("CODIGO");
+        modelo.addColumn("NOMBRE");
+        modelo.addColumn("VIDEOJUEGO");
+        modelo.addColumn("CUPO");
+        modelo.addColumn("ESTADO");
+
+        String datos[] = new String[5];
+
+        try {
+
+            PreparedStatement ps = conexionSQL.conectarSQL().prepareStatement("SELECT * FROM torneos;");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                datos[0] = rs.getString("codigo");
+                datos[1] = rs.getString("nombre");
+                datos[2] = rs.getString("codigo_videojuego");
+                datos[3] = rs.getString("cupo_maximo");
+                datos[4] = rs.getString("estado");
+
+                modelo.addRow(datos);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "No se puede cargar los torneos.");
+            System.out.println("Exception Consultar: " + ex.getMessage());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(frame,
+                    "No se puede establecer conexion con la base de datos");
+        } finally {
+            conexionSQL.desconectarSQL();
+        }
+
+        return modelo;
+    }
+
+    // Cargar al iniciar: pasa los torneos de MySQL a la lista en memoria.
+    // Llamarlo DESPUES de cargar los videojuegos, porque cada torneo apunta a uno.
+    public static String cargarEn(DatosSistema datos) {
         if (!ConexionSQL.USAR_BD) {
-            return null;
+            return "Torneos cargados con exito.";
         }
         ConexionSQL conexionSQL = new ConexionSQL();
 
@@ -53,9 +109,9 @@ public class Torneo {
                             EstadoTorneo.valueOf(rs.getString("estado"))));
                 }
             }
-            return null;
+            return "Torneos cargados con exito.";
         } catch (SQLException ex) {
-            System.out.println("Exception Consultar: " + ex.getMessage());
+            System.out.println("Exception Cargar: " + ex.getMessage());
             return "No se pueden cargar los torneos.";
         } catch (Exception ex) {
             return "No se puede establecer conexion con la base de datos.";
@@ -67,7 +123,7 @@ public class Torneo {
     // Agregar:
     public String agregar() {
         if (!ConexionSQL.USAR_BD) {
-            return null;
+            return "Torneo agregado con exito.";
         }
         ConexionSQL conexionSQL = new ConexionSQL();
 
@@ -83,7 +139,7 @@ public class Torneo {
             ps.setString(5, this.estado.toString());
 
             ps.executeUpdate();
-            return null;
+            return "Torneo agregado con exito.";
         } catch (SQLException ex) {
             System.out.println("Exception Agregar: " + ex.getMessage());
             return "No se pudo agregar el torneo.";
@@ -97,7 +153,7 @@ public class Torneo {
     // Editar: el codigo no cambia, solo se usa para el WHERE.
     public String editar() {
         if (!ConexionSQL.USAR_BD) {
-            return null;
+            return "Torneo modificado con exito.";
         }
         ConexionSQL conexionSQL = new ConexionSQL();
 
@@ -120,7 +176,7 @@ public class Torneo {
             ps.setString(5, this.codigo);
 
             ps.executeUpdate();
-            return null;
+            return "Torneo modificado con exito.";
         } catch (SQLException ex) {
             System.out.println("Exception Editar: " + ex.getMessage());
             return "No se pudo modificar el torneo.";
@@ -134,7 +190,7 @@ public class Torneo {
     // Eliminar:
     public String eliminar() {
         if (!ConexionSQL.USAR_BD) {
-            return null;
+            return "Torneo eliminado con exito.";
         }
         ConexionSQL conexionSQL = new ConexionSQL();
 
@@ -146,7 +202,7 @@ public class Torneo {
             ps.setString(1, this.codigo);
 
             ps.executeUpdate();
-            return null;
+            return "Torneo eliminado con exito.";
         } catch (SQLException ex) {
             System.out.println("Exception Eliminar: " + ex.getMessage());
             return "No se pudo eliminar el torneo.";
