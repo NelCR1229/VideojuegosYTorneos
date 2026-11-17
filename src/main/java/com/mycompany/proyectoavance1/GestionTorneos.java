@@ -1,6 +1,5 @@
 package com.mycompany.proyectoavance1;
 
-import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -406,10 +405,9 @@ public class GestionTorneos extends javax.swing.JFrame {
                 (Videojuego) cmbVideojuego.getSelectedItem(),
                 Integer.parseInt(txtCupo.getText().trim()),
                 (EstadoTorneo) cmbEstado.getSelectedItem());
-        try {
-            TorneoBD.insertar(torneo);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo guardar en la base de datos: " + ex.getMessage());
+        String mensajeBD = torneo.agregar();
+        if (mensajeBD != null) {
+            JOptionPane.showMessageDialog(this, mensajeBD);
             return;
         }
         datos.getTorneos().add(torneo);
@@ -436,17 +434,25 @@ public class GestionTorneos extends javax.swing.JFrame {
         Videojuego videojuego = (Videojuego) cmbVideojuego.getSelectedItem();
         int cupo = Integer.parseInt(txtCupo.getText().trim());
         EstadoTorneo estado = (EstadoTorneo) cmbEstado.getSelectedItem();
-        try {
-            TorneoBD.actualizar(torneo.getCodigo(), nombre, videojuego, cupo, estado);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo guardar en la base de datos: " + ex.getMessage());
-            return;
-        }
         // Se cambian los datos del MISMO objeto: el codigo y los demas modulos (Competencia) lo siguen viendo.
+        String nombreAnt = torneo.getNombre();
+        Videojuego videojuegoAnt = torneo.getVideojuego();
+        int cupoAnt = torneo.getCupoMaximo();
+        EstadoTorneo estadoAnt = torneo.getEstado();
         torneo.setNombre(nombre);
         torneo.setVideojuego(videojuego);
         torneo.setCupoMaximo(cupo);
         torneo.setEstado(estado);
+        String mensajeBD = torneo.editar();
+        if (mensajeBD != null) {
+            // Fallo la base: se devuelven los datos anteriores para no dejar memoria y BD distintas.
+            torneo.setNombre(nombreAnt);
+            torneo.setVideojuego(videojuegoAnt);
+            torneo.setCupoMaximo(cupoAnt);
+            torneo.setEstado(estadoAnt);
+            JOptionPane.showMessageDialog(this, mensajeBD);
+            return;
+        }
         cargarTabla();
         limpiar();
         JOptionPane.showMessageDialog(this, "Torneo actualizado.");
@@ -474,10 +480,9 @@ public class GestionTorneos extends javax.swing.JFrame {
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
-        try {
-            TorneoBD.eliminar(torneo.getCodigo());
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo eliminar de la base de datos: " + ex.getMessage());
+        String mensajeBD = torneo.eliminar();
+        if (mensajeBD != null) {
+            JOptionPane.showMessageDialog(this, mensajeBD);
             return;
         }
         datos.getTorneos().remove(torneo);
