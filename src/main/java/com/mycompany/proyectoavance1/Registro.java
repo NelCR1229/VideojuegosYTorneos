@@ -214,24 +214,32 @@ public class Registro extends javax.swing.JFrame {
         String clave = new String(txtClave.getPassword());
 
         // No intenta registrar si falta algun dato.
-        if (codigo.equals("") || nombre.equals("")|| nombreUsuario.equals("") || clave.trim().equals("")) {
-            JOptionPane.showMessageDialog(this,"Debe completar todos los campos.","Datos incompletos",JOptionPane.WARNING_MESSAGE);
+        if (codigo.equals("") || nombre.equals("") || nombreUsuario.equals("") || clave.trim().equals("")) {
+            JOptionPane.showMessageDialog(this, "Debe completar todos los campos.", "Datos incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        boolean registrado = datos.registrarUsuario(
-                codigo, nombre, nombreUsuario, clave
-        );
+        try {
+            boolean registrado = datos.registrarUsuario(
+                    codigo, nombre, nombreUsuario, clave
+            );
+            if (registrado) {
+                JOptionPane.showMessageDialog(this,"Usuario registrado correctamente.");
+                limpiar();
+            } else {
+                JOptionPane.showMessageDialog(this,"El codigo o el nombre de usuario ya existe.","Registro rechazado",JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error al registrar: " + ex.getMessage());
 
-        if (registrado) {
-            JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.");
-            limpiar();
-        } else {
-            JOptionPane.showMessageDialog(this, "El codigo o el nombre de usuario ya existe.", "Registro rechazado", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "No se pudo guardar el usuario en MySQL.",
+                    "Error de registro",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void CerrarVentana(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_CerrarVentana
-       volverLogin();
+        volverLogin();
     }//GEN-LAST:event_CerrarVentana
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

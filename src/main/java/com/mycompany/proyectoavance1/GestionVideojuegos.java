@@ -55,14 +55,18 @@ public class GestionVideojuegos extends javax.swing.JFrame {
 
     private void actualizarTabla() {
         DefaultTableModel modelo = new DefaultTableModel(new Object[][]{},
-                new String[]{"Código", "Nombre", "Género", "Plataforma"});
+                new String[]{"Código", "Nombre", "Género", "Plataforma"}) {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {
+                return false;
+            }
+        };
 
         for (Videojuego v : datos.getVideojuegos()) {
             modelo.addRow(new Object[]{v.getCodigo(), v.getNombre(), v.getGenero(), v.getPlataforma()});
         }
-
         tbVideojuegos.setModel(modelo);
-        tbVideojuegos.setEnabled(false);
+
     }
 
     @SuppressWarnings("unchecked")
@@ -123,6 +127,11 @@ public class GestionVideojuegos extends javax.swing.JFrame {
                 "Código", "Nombre", "Género", "Plataforma"
             }
         ));
+        tbVideojuegos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tbVideojuegosMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbVideojuegos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -200,39 +209,145 @@ public class GestionVideojuegos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCodigoActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        if (usuario.getRol() != Rol.Administrador) {
+            JOptionPane.showMessageDialog(this, "Su rol solo permite consultar videojuegos.");
+            return;
+        }
         String codigo = txtCodigo.getText().trim();
         String nombre = txtNombre.getText().trim();
         String genero = txtGenero.getText().trim();
         String plataforma = txtPlataforma.getText().trim();
-
         if (codigo.length() == 0 || nombre.length() == 0 || genero.length() == 0 || plataforma.length() == 0) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.");
             return;
         }
-
-        for (Videojuego v : datos.getVideojuegos()) {
-            if (v.getCodigo().equalsIgnoreCase(codigo)) {
-                JOptionPane.showMessageDialog(this, "Ya existe un videojuego con ese código.");
+        for (Videojuego videojuego : datos.getVideojuegos()) {
+            if (videojuego.getCodigo().equalsIgnoreCase(codigo)) {
+                JOptionPane.showMessageDialog(this, "Ya existe un videojuego con ese codigo.");
                 return;
             }
         }
-
-        datos.getVideojuegos().add(new Videojuego(codigo, nombre, genero, plataforma));
+        Videojuego nuevoVideojuego = new Videojuego(codigo, nombre, genero, plataforma);
+        String mensaje = nuevoVideojuego.agregar();
+        if (!mensaje.equals("Videojuego agregado con exito.")) {
+            JOptionPane.showMessageDialog(this, mensaje);
+            return;
+        }
+        // Actualiza la coleccion despues de guardar en MySQL.
+        datos.getVideojuegos().add(nuevoVideojuego);
         actualizarTabla();
-        limpiar();        // TODO add your handling code here:
+        limpiar();
+        JOptionPane.showMessageDialog(this, mensaje);
     }//GEN-LAST:event_btnAgregarActionPerformed
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
         volverPrincipal();
     }//GEN-LAST:event_btnVolverActionPerformed
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        JOptionPane.showMessageDialog(this, "Editar videojuego: pendiente para el siguiente avance.");
+        if (usuario.getRol() != Rol.Administrador) {
+            JOptionPane.showMessageDialog(this, "Su rol solo permite consultar videojuegos.");
+            return;
+        }
+        int fila = tbVideojuegos.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione el videojuego que desea editar.");
+            return;
+        }
+        String codigo = txtCodigo.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String genero = txtGenero.getText().trim();
+        String plataforma = txtPlataforma.getText().trim();
+        if (nombre.equals("") || genero.equals("") || plataforma.equals("")) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.");
+            return;
+        }
+        Videojuego seleccionado = null;
+        for (Videojuego videojuego : datos.getVideojuegos()) {
+            if (videojuego.getCodigo().equalsIgnoreCase(codigo)) {
+                seleccionado = videojuego;
+                break;
+            }
+        }
+
+        if (seleccionado == null) {
+            JOptionPane.showMessageDialog(this, "No se encontro el videojuego seleccionado.");
+            return;
+        }
+        Videojuego cambios = new Videojuego(seleccionado.getCodigo(), nombre, genero, plataforma);
+        String mensaje = cambios.editar();
+        if (!mensaje.equals("Videojuego modificado con exito.")) {
+            JOptionPane.showMessageDialog(this, mensaje);
+            return;
+        }
+
+        // Actualiza el objeto compartido después de guardar en MySQL.
+        seleccionado.setNombre(nombre);
+        seleccionado.setGenero(genero);
+        seleccionado.setPlataforma(plataforma);
+
+        actualizarTabla();
+        limpiar();
+        JOptionPane.showMessageDialog(this, mensaje);
     }//GEN-LAST:event_btnEditarActionPerformed
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        JOptionPane.showMessageDialog(this, "Eliminar videojuego: pendiente para el siguiente avance.");
+        if (usuario.getRol() != Rol.Administrador) {
+            JOptionPane.showMessageDialog(this,"Su rol solo permite consultar videojuegos.");
+            return;
+        }
+        int fila = tbVideojuegos.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(this,"Seleccione el videojuego que desea eliminar.");
+            return;
+        }
+        String codigo = tbVideojuegos.getValueAt(fila, 0).toString();
+        Videojuego seleccionado = null;
+        for (Videojuego videojuego : datos.getVideojuegos()) {
+            if (videojuego.getCodigo().equalsIgnoreCase(codigo)) {
+                seleccionado = videojuego;
+                break;
+            }
+        }
+        if (seleccionado == null) {
+            JOptionPane.showMessageDialog(this,
+                    "No se encontro el videojuego seleccionado.");
+            return;
+        }
+        for (Torneo torneo : datos.getTorneos()) {
+            if (torneo.getVideojuego().getCodigo().equalsIgnoreCase(codigo)) {
+                JOptionPane.showMessageDialog(this,"No se puede eliminar: el videojuego tiene torneos asociados.");
+                return;
+            }
+        }
+        int respuesta = JOptionPane.showConfirmDialog(this,"Desea eliminar el videojuego " + seleccionado.getNombre() + "?","Confirmar eliminacion",JOptionPane.YES_NO_OPTION);
+        if (respuesta != JOptionPane.YES_OPTION) {
+            return;
+        }
+        String mensaje = seleccionado.eliminar();
+        if (!mensaje.equals("Videojuego eliminado con exito.")) {
+            JOptionPane.showMessageDialog(this, mensaje);
+            return;
+        }
+        datos.getVideojuegos().remove(seleccionado);
+        actualizarTabla();
+        limpiar();
+        JOptionPane.showMessageDialog(this, mensaje);
+        
     }//GEN-LAST:event_btnEliminarActionPerformed
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         limpiar();
+        txtCodigo.setEnabled(usuario.getRol() == Rol.Administrador);
+        tbVideojuegos.clearSelection();
     }//GEN-LAST:event_btnLimpiarActionPerformed
+    private void tbVideojuegosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbVideojuegosMousePressed
+        int fila = tbVideojuegos.getSelectedRow();
+        if (fila >= 0) {
+            txtCodigo.setText(tbVideojuegos.getValueAt(fila, 0).toString());
+            txtNombre.setText(tbVideojuegos.getValueAt(fila, 1).toString());
+            txtGenero.setText(tbVideojuegos.getValueAt(fila, 2).toString());
+            txtPlataforma.setText(tbVideojuegos.getValueAt(fila, 3).toString());
+
+            txtCodigo.setEnabled(false);
+        }
+    }//GEN-LAST:event_tbVideojuegosMousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;

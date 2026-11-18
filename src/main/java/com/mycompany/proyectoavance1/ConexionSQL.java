@@ -19,7 +19,7 @@ public class ConexionSQL {
 
     public ConexionSQL() {
         this.url = "jdbc:mysql://localhost:3306/";
-        this.db = "videojuegos_torneos";
+        this.db = "VideojuegosTorneosDB";
         this.user = "root";
         this.password = ""; // poner la clave del MySQL de cada compu
         this.driver = "com.mysql.cj.jdbc.Driver";
