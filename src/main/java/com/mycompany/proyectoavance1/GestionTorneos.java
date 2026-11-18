@@ -242,6 +242,7 @@ public class GestionTorneos extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Gestión de torneos");
+        getContentPane().setBackground(new java.awt.Color(245, 238, 224));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 CerrarVentana(evt);
@@ -249,18 +250,25 @@ public class GestionTorneos extends javax.swing.JFrame {
         });
 
         lblTitulo.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(122, 72, 38));
         lblTitulo.setText("Gestión de torneos");
 
+        lblCodigo.setForeground(new java.awt.Color(74, 51, 34));
         lblCodigo.setText("Código:");
 
+        lblNombre.setForeground(new java.awt.Color(74, 51, 34));
         lblNombre.setText("Nombre:");
 
+        lblVideojuego.setForeground(new java.awt.Color(74, 51, 34));
         lblVideojuego.setText("Videojuego:");
 
+        lblCupo.setForeground(new java.awt.Color(74, 51, 34));
         lblCupo.setText("Cupo máximo:");
 
+        lblEstado.setForeground(new java.awt.Color(74, 51, 34));
         lblEstado.setText("Estado:");
 
+        btnAgregar.setForeground(new java.awt.Color(74, 51, 34));
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -268,6 +276,7 @@ public class GestionTorneos extends javax.swing.JFrame {
             }
         });
 
+        btnEditar.setForeground(new java.awt.Color(74, 51, 34));
         btnEditar.setText("Editar");
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -275,6 +284,7 @@ public class GestionTorneos extends javax.swing.JFrame {
             }
         });
 
+        btnEliminar.setForeground(new java.awt.Color(166, 60, 40));
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -282,6 +292,7 @@ public class GestionTorneos extends javax.swing.JFrame {
             }
         });
 
+        btnLimpiar.setForeground(new java.awt.Color(74, 51, 34));
         btnLimpiar.setText("Limpiar");
         btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -289,6 +300,7 @@ public class GestionTorneos extends javax.swing.JFrame {
             }
         });
 
+        btnRegresar.setForeground(new java.awt.Color(74, 51, 34));
         btnRegresar.setText("Regresar");
         btnRegresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -296,6 +308,9 @@ public class GestionTorneos extends javax.swing.JFrame {
             }
         });
 
+        tblTorneos.setBackground(new java.awt.Color(255, 251, 242));
+        tblTorneos.setForeground(new java.awt.Color(74, 51, 34));
+        tblTorneos.setSelectionBackground(new java.awt.Color(222, 184, 135));
         tblTorneos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
