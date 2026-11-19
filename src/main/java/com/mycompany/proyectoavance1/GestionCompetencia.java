@@ -1,6 +1,7 @@
 package com.mycompany.proyectoavance1;
 
 import javax.swing.JOptionPane;
+import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultComboBoxModel;
 
@@ -10,6 +11,16 @@ public class GestionCompetencia extends javax.swing.JFrame {
     private DefaultTableModel modeloTabla;
     private Principal principal;
     private Usuario usuario;
+    
+    private javax.swing.JComboBox<Usuario> cbUsuarioInscribir;
+    private javax.swing.JButton btnInscribir;
+    private javax.swing.JComboBox<Partida> cbPartidaGanador;
+    private javax.swing.JComboBox<Usuario> cbGanador;
+    private javax.swing.JButton btnGuardarGanador;
+    private javax.swing.JLabel lblInscribir;
+    private javax.swing.JLabel lblPartidaGan;
+    private javax.swing.JLabel lblGanador;
+    private ArrayList<Partida> partidasMostradas = new ArrayList<>();
 
     //Consstructor 
     public GestionCompetencia(DatosSistema datos, Principal principal, Usuario usuario) {
@@ -19,10 +30,119 @@ public class GestionCompetencia extends javax.swing.JFrame {
         this.usuario = usuario;
 
         setLocationRelativeTo(null);
+        inicializarControlesExtra();
         cargarListasDesplegables();
         actualizarJugadoresPorTorneo();
         actualizarTabla();
         aplicarPermisos();
+    }
+    
+    private void accionInscribir() {
+        Torneo torneoSel = (Torneo) cbTorneo.getSelectedItem();
+        Usuario usuarioSel = (usuario.getRol() == Rol.Participante)
+                ? usuario
+                : (Usuario) cbUsuarioInscribir.getSelectedItem();
+
+        JOptionPane.showMessageDialog(this, registrarInscripcion(torneoSel, usuarioSel));
+    }
+
+    private boolean estaInscrito(Torneo torneo, Usuario jugador) {
+        if (torneo == null || jugador == null) {
+            return false;
+        }
+        for (Inscripcion ins : datos.getInscripciones()) {
+            if (ins.getTorneo().getCodigo().equals(torneo.getCodigo())
+                    && ins.getUsuario().getCodigo().equals(jugador.getCodigo())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void actualizarComboGanador() {
+        Partida partidaSel = (Partida) cbPartidaGanador.getSelectedItem();
+        if (partidaSel == null) {
+            cbGanador.setModel(new DefaultComboBoxModel<>(new Usuario[0]));
+            return;
+        }
+        Usuario[] opciones = new Usuario[]{partidaSel.getJugador1(), partidaSel.getJugador2()};
+        cbGanador.setModel(new DefaultComboBoxModel<>(opciones));
+        if (partidaSel.getGanador() != null) {
+            cbGanador.setSelectedItem(partidaSel.getGanador());
+        }
+    }
+
+    private void accionGuardarGanador() {
+        if (usuario.getRol() != Rol.Administrador && usuario.getRol() != Rol.Organizador) {
+            JOptionPane.showMessageDialog(this, "Su rol no permite registrar ganadores.");
+            return;
+        }
+        Partida partidaSel = (Partida) cbPartidaGanador.getSelectedItem();
+        Usuario ganadorSel = (Usuario) cbGanador.getSelectedItem();
+
+        if (partidaSel == null || ganadorSel == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione una partida y un ganador.");
+            return;
+        }
+
+        boolean valido = ganadorSel.getCodigo().equals(partidaSel.getJugador1().getCodigo())
+                || ganadorSel.getCodigo().equals(partidaSel.getJugador2().getCodigo());
+        if (!valido) {
+            JOptionPane.showMessageDialog(this, "El ganador debe ser Jugador 1 o Jugador 2 de la partida.");
+            return;
+        }
+
+        Usuario anterior = partidaSel.getGanador();
+        partidaSel.setGanador(ganadorSel);
+        String respBD = partidaSel.actualizarGanador();
+        if (!respBD.equals("Ganador registrado exitosamente.")) {
+            partidaSel.setGanador(anterior);
+            JOptionPane.showMessageDialog(this, respBD, "Error MySQL", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        actualizarTabla();
+        JOptionPane.showMessageDialog(this, "Ganador guardado: " + ganadorSel.getNombre());
+    }
+    
+    private void inicializarControlesExtra() {
+        lblInscribir = new javax.swing.JLabel("Inscribir:");
+        cbUsuarioInscribir = new javax.swing.JComboBox<>();
+        btnInscribir = new javax.swing.JButton("Inscribir");
+
+        lblPartidaGan = new javax.swing.JLabel("Partida:");
+        cbPartidaGanador = new javax.swing.JComboBox<>();
+        lblGanador = new javax.swing.JLabel("Ganador:");
+        cbGanador = new javax.swing.JComboBox<>();
+        btnGuardarGanador = new javax.swing.JButton("Guardar Ganador");
+
+        // Posicionamiento rápido dentro del panel principal para no alterar initComponents()
+        lblInscribir.setBounds(20, 260, 90, 25);
+        cbUsuarioInscribir.setBounds(115, 260, 210, 25);
+        btnInscribir.setBounds(335, 260, 110, 25);
+
+        lblPartidaGan.setBounds(20, 295, 90, 25);
+        cbPartidaGanador.setBounds(115, 295, 210, 25);
+        lblGanador.setBounds(20, 330, 90, 25);
+        cbGanador.setBounds(115, 330, 210, 25);
+        btnGuardarGanador.setBounds(335, 312, 145, 30);
+
+        getContentPane().add(lblInscribir);
+        getContentPane().add(cbUsuarioInscribir);
+        getContentPane().add(btnInscribir);
+        getContentPane().add(lblPartidaGan);
+        getContentPane().add(cbPartidaGanador);
+        getContentPane().add(lblGanador);
+        getContentPane().add(cbGanador);
+        getContentPane().add(btnGuardarGanador);
+
+        btnInscribir.addActionListener(evt -> accionInscribir());
+        btnGuardarGanador.addActionListener(evt -> accionGuardarGanador());
+        cbPartidaGanador.addItemListener(evt -> {
+            if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                actualizarComboGanador();
+            }
+        });
     }
     
     private void cargarListasDesplegables() {
