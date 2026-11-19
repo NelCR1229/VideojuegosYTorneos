@@ -1,5 +1,7 @@
 package com.mycompany.proyectoavance1;
+
 import javax.swing.JOptionPane;
+
 public class ProyectoAvance1 {
     public static void main(String[] args) {
         ConexionSQL.USAR_BD = true;
@@ -12,6 +14,8 @@ public class ProyectoAvance1 {
                 JOptionPane.showMessageDialog(null, mensaje);
                 return;
             }
+            Inscripcion.cargarEn(datos);
+            Partida.cargarEn(datos);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(null,
