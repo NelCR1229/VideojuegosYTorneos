@@ -24,6 +24,7 @@ public class GestionVideojuegos extends javax.swing.JFrame {
 
     public GestionVideojuegos(Principal principal, DatosSistema datos, Usuario usuario) {
         initComponents();
+        aplicarPaleta();
         this.principal = principal;
         this.datos = datos;
         this.usuario = usuario;
@@ -49,7 +50,6 @@ public class GestionVideojuegos extends javax.swing.JFrame {
         tbVideojuegos.setRowHeight(25);
         tbVideojuegos.getTableHeader().setReorderingAllowed(false);
         tbVideojuegos.getTableHeader().setFont(new Font("Verdana", Font.PLAIN, 18));
-        tbVideojuegos.getTableHeader().setForeground(new Color(102, 153, 0));
         DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) tbVideojuegos
                 .getTableHeader().getDefaultRenderer();
         renderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -57,6 +57,39 @@ public class GestionVideojuegos extends javax.swing.JFrame {
         cargarTabla();
         limpiar();
         setLocationRelativeTo(null);
+    }
+
+    private void aplicarPaleta() {
+        Color fondo = new Color(245, 238, 224);
+        Color texto = new Color(74, 51, 34);
+        Color titulo = new Color(122, 72, 38);
+        Color eliminar = new Color(166, 60, 40);
+        Color tabla = new Color(255, 251, 242);
+        Color seleccion = new Color(222, 184, 135);
+
+        getContentPane().setBackground(fondo);
+        jLabel1.setForeground(texto);
+        jLabel2.setForeground(texto);
+        jLabel3.setForeground(texto);
+        jLabel4.setForeground(texto);
+        txtCodigo.setForeground(texto);
+        txtNombre.setForeground(texto);
+        txtGenero.setForeground(texto);
+        txtPlataforma.setForeground(texto);
+        txtCodigo.setBackground(tabla);
+        txtNombre.setBackground(tabla);
+        txtGenero.setBackground(tabla);
+        txtPlataforma.setBackground(tabla);
+        btnAgregar.setForeground(texto);
+        btnEditar.setForeground(texto);
+        btnEliminar.setForeground(eliminar);
+        btnLimpiar.setForeground(texto);
+        btnVolver.setForeground(texto);
+        tbVideojuegos.setBackground(tabla);
+        tbVideojuegos.setForeground(texto);
+        tbVideojuegos.setSelectionBackground(seleccion);
+        tbVideojuegos.getTableHeader().setForeground(titulo);
+        jScrollPane1.getViewport().setBackground(tabla);
     }
 
     public void volverPrincipal() {
